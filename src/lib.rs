@@ -26,10 +26,6 @@ pub fn trim_gray_scale(
     (gray, chromatic)
 }
 
-pub fn normalize_gray_scale(v: f64, w: f64) -> i32 {
-    2
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -58,6 +54,14 @@ mod test {
         assert_eq!(0, sampling(6. - offset, 95., 12.))
     }
 
+    // グレースケールを0~2の範囲の離散値に正規化する
+    // 0:黒, 1:グレー, 2:白
+    #[test]
+    fn case_normalize_gray_scale() {
+        // 無彩色であるという前提があるなら、グレースケールはbrightnessのみで計測できる。
+        assert_eq!(1, sampling(40., 100., 2.))
+    }
+
     // 無彩色を削除した配列と無彩色のみの配列を生成
     #[test]
     fn case_trim_gray_scale() {
@@ -73,12 +77,5 @@ mod test {
         );
         // sが5%以下またはbが5%以下
         assert_eq!(expect, trim_gray_scale(&original, 5, 5))
-    }
-
-    // グレースケールを0~2の範囲の離散値に正規化する
-    // 0:黒, 1:グレー, 2:白
-    #[test]
-    fn case_normalize_gray_scale() {
-        assert_eq!(2, normalize_gray_scale(5., 100.))
     }
 }
