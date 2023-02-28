@@ -7,11 +7,23 @@ pub fn sampling(v: f64, before_range: f64, after_range: f64) -> i32 {
     }
 }
 
-pub fn trim_gray_scale(v: &Vec<Vec<i32>>) -> (Vec<Vec<i32>>, Vec<Vec<i32>>) {
-    (
-        vec![vec![0, 5, 100], vec![0, 100, 5]],
-        vec![vec![0, 6, 100], vec![0, 100, 6]],
-    )
+pub fn trim_gray_scale(
+    v: &Vec<Vec<i32>>,
+    threshold_saturation: i32,
+    threshold_brightness: i32,
+) -> (Vec<Vec<i32>>, Vec<Vec<i32>>) {
+    let mut chromatic: Vec<Vec<i32>> = Vec::new();
+    let mut gray: Vec<Vec<i32>> = Vec::new();
+
+    for j in v {
+        if j[1] <= threshold_saturation || j[2] <= threshold_brightness {
+            gray.push(j.to_vec());
+        } else {
+            chromatic.push(j.to_vec());
+        }
+    }
+
+    (gray, chromatic)
 }
 
 pub fn normalize_gray_scale(v: f64, w: f64) -> i32 {
@@ -60,7 +72,7 @@ mod test {
             vec![vec![0, 6, 100], vec![0, 100, 6]],
         );
         // sが5%以下またはbが5%以下
-        assert_eq!(expect, trim_gray_scale(&original))
+        assert_eq!(expect, trim_gray_scale(&original, 5, 5))
     }
 
     // グレースケールを0~2の範囲の離散値に正規化する
