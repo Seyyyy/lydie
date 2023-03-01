@@ -1,4 +1,24 @@
-pub fn sampling(v: f64, before_range: f64, after_range: f64) -> i32 {
+#[derive(Debug, PartialEq)]
+pub struct UsageRate {
+    hue_chromatic: Vec<i32>,
+    hue_gray_scale: Vec<i32>,
+    saturation: Vec<i32>,
+    brightness: Vec<i32>,
+}
+
+pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<i32>>) -> UsageRate {
+    // let arr = trim_gray_scale(&hsv_vec, 5, 5);
+
+    let expect = UsageRate {
+        hue_chromatic: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        hue_gray_scale: vec![0, 0, 1],
+        saturation: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        brightness: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+    };
+    return expect;
+}
+
+fn sampling(v: f64, before_range: f64, after_range: f64) -> i32 {
     let normalize_value = v / (before_range / after_range);
     if normalize_value > after_range {
         normalize_value.floor() as i32
@@ -7,7 +27,7 @@ pub fn sampling(v: f64, before_range: f64, after_range: f64) -> i32 {
     }
 }
 
-pub fn trim_gray_scale(
+fn trim_gray_scale(
     v: &Vec<Vec<i32>>,
     threshold_saturation: i32,
     threshold_brightness: i32,
@@ -77,5 +97,23 @@ mod test {
         );
         // sが5%以下またはbが5%以下
         assert_eq!(expect, trim_gray_scale(&original, 5, 5))
+    }
+
+    // hsv配列を受け取って分析結果を返却する
+    #[test]
+    fn case_usage_rate_per_color() {
+        let image_vec = vec![
+            vec![0, 10, 100],
+            vec![180, 50, 50],
+            vec![360, 100, 10],
+            vec![180, 0, 100],
+        ];
+        let expect = UsageRate {
+            hue_chromatic: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            hue_gray_scale: vec![0, 0, 1],
+            saturation: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            brightness: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        };
+        assert_eq!(expect, get_usage_rate_per_color(&image_vec))
     }
 }
