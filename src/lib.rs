@@ -1,19 +1,51 @@
+// 0 ~ 11 (Level 12)
+const SAMPLING_CHROMATIC_LEVEL: usize = 12;
+// 0 ~ 2 (Level 3)
+const SAMPLING_GRAY_LEVEL: usize = 3;
+
 #[derive(Debug, PartialEq)]
 pub struct UsageRate {
     hue_chromatic: Vec<i32>,
-    hue_gray_scale: Vec<i32>,
+    hue_gray: Vec<i32>,
     saturation: Vec<i32>,
     brightness: Vec<i32>,
 }
 
 pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<i32>>) -> UsageRate {
-    // let arr = trim_gray_scale(&hsv_vec, 5, 5);
+    let arr = trim_gray_scale(&hsv_vec, 5, 5);
+
+    let mut hc_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
+    let mut hg_arr = vec![0; SAMPLING_GRAY_LEVEL];
+    let mut s_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
+    let mut b_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
+
+    for i in arr.1 {
+        let hi = sampling(i[0] as f64, 360., (SAMPLING_CHROMATIC_LEVEL - 1) as f64);
+        let si = sampling(
+            (i[1] - 5) as f64,
+            95.,
+            (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
+        );
+        let bi = sampling(
+            (i[2] - 5) as f64,
+            95.,
+            (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
+        );
+        hc_arr[hi as usize] += 1;
+        s_arr[si as usize] += 1;
+        b_arr[bi as usize] += 1;
+    }
+
+    for i in arr.0 {
+        let hi = sampling(i[2] as f64, 100., (SAMPLING_GRAY_LEVEL - 1) as f64);
+        hg_arr[hi as usize] += 1;
+    }
 
     let expect = UsageRate {
-        hue_chromatic: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-        hue_gray_scale: vec![0, 0, 1],
-        saturation: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-        brightness: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        hue_chromatic: hc_arr,
+        hue_gray: hg_arr,
+        saturation: s_arr,
+        brightness: b_arr,
     };
     return expect;
 }
@@ -100,19 +132,21 @@ mod test {
     }
 
     // hsv配列を受け取って分析結果を返却する
+    // 各段階ごとのピクセル数を返却する
+    // 割合の計算は親モジュールの責務
     #[test]
     fn case_usage_rate_per_color() {
         let image_vec = vec![
-            vec![0, 10, 100],
-            vec![180, 50, 50],
-            vec![360, 100, 10],
+            vec![0, 6, 100],
+            vec![180, 55, 55],
+            vec![360, 100, 6],
             vec![180, 0, 100],
         ];
         let expect = UsageRate {
-            hue_chromatic: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-            hue_gray_scale: vec![0, 0, 1],
-            saturation: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-            brightness: vec![1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            hue_chromatic: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            hue_gray: vec![0, 0, 1],
+            saturation: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            brightness: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         };
         assert_eq!(expect, get_usage_rate_per_color(&image_vec))
     }
