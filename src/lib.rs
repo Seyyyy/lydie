@@ -53,7 +53,7 @@ mod test {
     // Hue(0 ~ 360deg)を0~11(11段階)の範囲の離散値に正規化する
     #[test]
     fn case_normalize_hue() {
-        assert_eq!(12, sampling(360., 360., 11.))
+        assert_eq!(11, sampling(360., 360., 11.))
     }
 
     // Saturation(5 ~ 100%)を0~11(11段階)の範囲の離散値に正規化する
@@ -62,7 +62,7 @@ mod test {
     fn case_normalize_saturation() {
         // 「5 < 100」の値だと正規化が難しいので[0 < 95]にずらす
         let offset = 5.;
-        assert_eq!(12, sampling(100. - offset, 95., 11.))
+        assert_eq!(11, sampling(100. - offset, 95., 11.))
     }
 
     // Brightness(5 ~ 100%)を0~11(11段階)の範囲の離散値に正規化する
