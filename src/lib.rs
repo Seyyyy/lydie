@@ -19,6 +19,7 @@ pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<i32>>) -> UsageRate {
     let mut s_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
     let mut b_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
 
+    // analisys chromatic array
     for i in arr.1 {
         let hi = sampling(i[0] as f64, 360., (SAMPLING_CHROMATIC_LEVEL - 1) as f64);
         let si = sampling(
@@ -36,6 +37,7 @@ pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<i32>>) -> UsageRate {
         b_arr[bi as usize] += 1;
     }
 
+    // analisys gray scale array
     for i in arr.0 {
         let hi = sampling(i[2] as f64, 100., (SAMPLING_GRAY_LEVEL - 1) as f64);
         hg_arr[hi as usize] += 1;
