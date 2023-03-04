@@ -50,31 +50,31 @@ fn trim_gray_scale(
 mod test {
     use super::*;
 
-    // Hue(0 ~ 360deg)を0~12の範囲の離散値に正規化する
+    // Hue(0 ~ 360deg)を0~11(11段階)の範囲の離散値に正規化する
     #[test]
     fn case_normalize_hue() {
-        assert_eq!(12, sampling(360., 360., 12.))
+        assert_eq!(12, sampling(360., 360., 11.))
     }
 
-    // Saturation(5 ~ 100%)を0~12の範囲の離散値に正規化する
+    // Saturation(5 ~ 100%)を0~11(11段階)の範囲の離散値に正規化する
     // 5%以下は無彩色として除外する予定
     #[test]
     fn case_normalize_saturation() {
         // 「5 < 100」の値だと正規化が難しいので[0 < 95]にずらす
         let offset = 5.;
-        assert_eq!(12, sampling(100. - offset, 95., 12.))
+        assert_eq!(12, sampling(100. - offset, 95., 11.))
     }
 
-    // Brightness(5 ~ 100%)を0~12の範囲の離散値に正規化する
+    // Brightness(5 ~ 100%)を0~11(11段階)の範囲の離散値に正規化する
     // 5%以下は無彩色として除外する予定
     #[test]
     fn case_normalize_brightness() {
         // 「5 < 100」の値だと正規化が難しいので[0 < 95]にずらす
         let offset = 5.;
-        assert_eq!(0, sampling(6. - offset, 95., 12.))
+        assert_eq!(0, sampling(6. - offset, 95., 11.))
     }
 
-    // グレースケールを0~2の範囲の離散値に正規化する
+    // グレースケールを0~2(3段階)の範囲の離散値に正規化する
     // 0:黒, 1:グレー, 2:白
     #[test]
     fn case_normalize_gray_scale() {
