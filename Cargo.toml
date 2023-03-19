@@ -2,6 +2,12 @@
 name = "lydie"
 version = "0.1.0"
 edition = "2021"
+authors = ["seyyyy"]
+description = "sampling color"
+license = "MIT"
+repository = "git+https://github.com/Seyyyy/lydie.git"
+readme = "README.md"
+homepage = "https://github.com/Seyyyy/lydie#readme"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
