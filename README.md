@@ -24,3 +24,5 @@ image.get_usage_rate_gray_scale();
 ```
 
 ## Example
+
+https://github.com/Seyyyy/lydie/tree/main/example
