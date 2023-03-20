@@ -11,11 +11,16 @@ $ npm i lydie
 ## Usage
 
 ```ts
-import { Image } from "lydie";
+import { Image, ColorModel } from "lydie";
 
 // hsvArray is 3-dimensional array in hsv color.
 // First argument of Image constructor must be received 1-dimensional array.
-const image = new Image(new Uint32Array(hsvArray.flat()), width, height);
+const image = new Image(
+  new Uint32Array(hsvArray.flat()),
+  width,
+  height,
+  ColorModel.HSV
+);
 // Sapmling of colors.
 image.calc_usage_rate();
 
