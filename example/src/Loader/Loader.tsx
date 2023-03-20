@@ -1,35 +1,7 @@
 import React, { useState } from "react";
-import { Image as LImage } from "lydie";
+import { Image as LImage, ColorModel } from "lydie";
 import "./Loader.css";
 import { Viewer } from "./Viewer";
-
-function rgb2hsv(r: number, g: number, b: number) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  let max = Math.max(r, g, b);
-  let min = Math.min(r, g, b);
-  let h = 0,
-    s,
-    v = max;
-  let d = max - min;
-  s = max === 0 ? 0 : d / max;
-  if (max !== min) {
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(v * 100)];
-}
 
 export function ImageLoader() {
   const [limage, setLimage] = useState<LImage | null>(null);
@@ -58,21 +30,21 @@ export function ImageLoader() {
           ctx.drawImage(img, 0, 0);
           let imageData = ctx.getImageData(0, 0, img.width, img.height);
           let data = imageData.data;
-          let hsvArray: number[][] = [];
+          let rgbArray: number[][] = [];
           for (let i = 0; i < data.length; i += 4) {
             let r = data[i];
             let g = data[i + 1];
             let b = data[i + 2];
-            let hsv = rgb2hsv(r, g, b);
-            hsvArray.push(hsv);
+            rgbArray.push([r, g, b]);
           }
 
           let before = performance.now();
 
           const analyzedImage = new LImage(
-            new Uint32Array(hsvArray.flat()),
+            new Uint32Array(rgbArray.flat()),
             img.width,
-            img.height
+            img.height,
+            ColorModel.RGB
           );
           analyzedImage.calc_usage_rate();
           setLimage(analyzedImage);
