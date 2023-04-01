@@ -10,21 +10,21 @@ pub enum ColorModel {
 
 #[wasm_bindgen]
 pub struct Image {
-    hsv: Vec<u32>,
-    width: u32,
-    height: u32,
+    hsv: Vec<u16>,
+    width: u16,
+    height: u16,
     usage_rate: core::simplify::UsageRate,
 }
 
 #[wasm_bindgen]
 impl Image {
     #[wasm_bindgen(constructor)]
-    pub fn new(hsv: Vec<u32>, width: u32, height: u32, color_model: ColorModel) -> Image {
+    pub fn new(hsv: Vec<u16>, width: u16, height: u16, color_model: ColorModel) -> Image {
         match color_model {
             ColorModel::RGB => {
                 let array2d =
                     formatter::array::convert_2d_array(&hsv, width as usize, height as usize);
-                let hsv2darray: Vec<Vec<u32>> = array2d
+                let hsv2darray: Vec<Vec<u16>> = array2d
                     .iter()
                     .map(|v| formatter::color_model::rgb2hsv(v[0], v[1], v[2]))
                     .collect();

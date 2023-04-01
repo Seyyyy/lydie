@@ -1,4 +1,4 @@
-pub fn convert_2d_array(arr: &Vec<u32>, width: usize, height: usize) -> Vec<Vec<u32>> {
+pub fn convert_2d_array(arr: &Vec<u16>, width: usize, height: usize) -> Vec<Vec<u16>> {
     let mut result = vec![vec![0; 3]; width * height];
     for i in 0..height {
         for j in 0..width {
@@ -12,7 +12,7 @@ pub fn convert_2d_array(arr: &Vec<u32>, width: usize, height: usize) -> Vec<Vec<
     result
 }
 
-pub fn convert_flat_2d_array(arr: &Vec<Vec<u32>>) -> Vec<u32> {
+pub fn convert_flat_2d_array(arr: &Vec<Vec<u16>>) -> Vec<u16> {
     let mut result = vec![0; arr.len() * 3];
     for i in 0..arr.len() {
         result[i * 3] = arr[i][0];
