@@ -1,4 +1,4 @@
-pub fn rgb2hsv(r: u32, g: u32, b: u32) -> Vec<u32> {
+pub fn rgb2hsv(r: u16, g: u16, b: u16) -> Vec<u16> {
     let r = r as f64 / 255.0;
     let g = g as f64 / 255.0;
     let b = b as f64 / 255.0;
@@ -25,9 +25,9 @@ pub fn rgb2hsv(r: u32, g: u32, b: u32) -> Vec<u32> {
     }
 
     vec![
-        h.round() as u32,
-        (s * 100.0).round() as u32,
-        (v * 100.0).round() as u32,
+        h.round() as u16,
+        (s * 100.0).round() as u16,
+        (v * 100.0).round() as u16,
     ]
 }
 

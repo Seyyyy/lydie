@@ -38,7 +38,7 @@ impl UsageRate {
     }
 }
 
-pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<u32>>) -> UsageRate {
+pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<u16>>) -> UsageRate {
     let arr = trim_gray_scale(&hsv_vec, 5, 5);
 
     let mut hc_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
@@ -79,22 +79,22 @@ pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<u32>>) -> UsageRate {
     return expect;
 }
 
-fn sampling(v: f64, before_range: f64, after_range: f64) -> u32 {
+fn sampling(v: f64, before_range: f64, after_range: f64) -> u16 {
     let normalize_value = v / (before_range / after_range);
     if normalize_value > after_range {
-        normalize_value.floor() as u32
+        normalize_value.floor() as u16
     } else {
-        normalize_value.round() as u32
+        normalize_value.round() as u16
     }
 }
 
 fn trim_gray_scale(
-    v: &Vec<Vec<u32>>,
-    threshold_saturation: u32,
-    threshold_brightness: u32,
-) -> (Vec<Vec<u32>>, Vec<Vec<u32>>) {
-    let mut chromatic: Vec<Vec<u32>> = Vec::new();
-    let mut gray: Vec<Vec<u32>> = Vec::new();
+    v: &Vec<Vec<u16>>,
+    threshold_saturation: u16,
+    threshold_brightness: u16,
+) -> (Vec<Vec<u16>>, Vec<Vec<u16>>) {
+    let mut chromatic: Vec<Vec<u16>> = Vec::new();
+    let mut gray: Vec<Vec<u16>> = Vec::new();
 
     for j in v {
         if j[1] <= threshold_saturation || j[2] <= threshold_brightness {
