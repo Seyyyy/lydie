@@ -1,0 +1,26 @@
+{
+  "name": "lydie",
+  "collaborators": [
+    "seyyyy"
+  ],
+  "description": "sampling color",
+  "version": "0.1.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Seyyyy/lydie.git"
+  },
+  "files": [
+    "pkg/lydie_bg.wasm",
+    "pkg/lydie.js",
+    "pkg/lydie.d.ts",
+    "index.js",
+    "index.d.ts"
+  ],
+  "module": "index.js",
+  "homepage": "https://github.com/Seyyyy/lydie#readme",
+  "types": "index.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
