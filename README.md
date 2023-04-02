@@ -11,21 +11,17 @@ $ npm i lydie
 ## Usage
 
 ```ts
-import { Image, ColorModel } from "lydie";
+import init, { Lydie } from "lydie";
 
+const wasm = init();
 // hsvArray is 3-dimensional array in hsv color.
 // First argument of Image constructor must be received 1-dimensional array.
-const image = new Image(
-  new Uint32Array(hsvArray.flat()),
-  width,
-  height,
-  ColorModel.HSV
-);
+const lydie = new Image(hsvArray.flat(), width, height, wasm.memory);
 // Sapmling of colors.
-image.calc_usage_rate();
+lydie.image.calc_usage_rate();
 
 // The number of grayscale pixels can be obtained.
-image.get_usage_rate_gray_scale();
+lydie.image.get_usage_rate_gray_scale();
 ```
 
 ## Example

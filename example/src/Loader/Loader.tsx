@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Image as LImage, ColorModel } from "lydie";
+import React, { useState, useEffect } from "react";
+import init, { Lydie, Image as LImage, InitOutput } from "lydie";
+import url from "lydie/pkg/lydie_bg.wasm?url";
 import "./Loader.css";
 import { Viewer } from "./Viewer";
 
@@ -11,6 +12,14 @@ export function ImageLoader() {
     width: 0,
     height: 0,
   });
+  const [wasm, setWasm] = useState<InitOutput>({} as InitOutput);
+
+  useEffect(() => {
+    (async () => {
+      const wasm = await init(url);
+      setWasm(wasm);
+    })();
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -35,17 +44,20 @@ export function ImageLoader() {
             let r = data[i];
             let g = data[i + 1];
             let b = data[i + 2];
-            rgbArray.push([r, g, b]);
+            const ar = rgb2hsv(r, g, b);
+            rgbArray.push([ar[0], ar[1], ar[2]]);
           }
 
           let before = performance.now();
 
-          const analyzedImage = new LImage(
-            new Uint32Array(rgbArray.flat()),
+          const flatArray = rgbArray.flat();
+
+          const analyzedImage = new Lydie(
+            flatArray,
             img.width,
             img.height,
-            ColorModel.RGB
-          );
+            wasm.memory
+          ).image;
           analyzedImage.calc_usage_rate();
           setLimage(analyzedImage);
 
@@ -81,3 +93,36 @@ export function ImageLoader() {
     </div>
   );
 }
+
+const rgb2hsv = (r: number, g: number, b: number): number[] => {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  let v = max;
+  const d = max - min;
+  s = max === 0 ? 0 : d / max;
+  if (max === min) {
+    h = 0;
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  v = Math.round(v * 100);
+  return [h, s, v];
+};
