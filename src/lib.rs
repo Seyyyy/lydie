@@ -14,36 +14,25 @@ pub struct Image {
     width: u16,
     height: u16,
     usage_rate: core::simplify::UsageRate,
+    pub hsv_pointer: *const u16,
 }
 
 #[wasm_bindgen]
 impl Image {
     #[wasm_bindgen(constructor)]
-    pub fn new(hsv: Vec<u16>, width: u16, height: u16, color_model: ColorModel) -> Image {
-        match color_model {
-            ColorModel::RGB => {
-                let array2d =
-                    formatter::array::convert_2d_array(&hsv, width as usize, height as usize);
-                let hsv2darray: Vec<Vec<u16>> = array2d
-                    .iter()
-                    .map(|v| formatter::color_model::rgb2hsv(v[0], v[1], v[2]))
-                    .collect();
-                let hsv = formatter::array::convert_flat_2d_array(&hsv2darray);
-                return Image {
-                    hsv,
-                    width,
-                    height,
-                    usage_rate: core::simplify::UsageRate::new(),
-                };
-            }
-            ColorModel::HSV => {
-                return Image {
-                    hsv,
-                    width,
-                    height,
-                    usage_rate: core::simplify::UsageRate::new(),
-                };
-            }
+    pub fn new(size: u32, width: u16, height: u16) -> Image {
+        let mut hsv_arr = Vec::with_capacity(size as usize);
+        unsafe {
+            hsv_arr.set_len(size as usize);
+        }
+        let hsv_pointer = hsv_arr.as_ptr();
+
+        Image {
+            hsv: hsv_arr,
+            width,
+            height,
+            usage_rate: core::simplify::UsageRate::new(),
+            hsv_pointer,
         }
     }
 
@@ -84,7 +73,8 @@ mod tests {
 
     #[test]
     fn test_get_hue() {
-        let mut image = Image::new(vec![100, 100, 100, 0, 0, 0], 2, 1, ColorModel::HSV);
+        let mut image = Image::new(6, 2, 1);
+        image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
             image.get_usage_rate_hue(),
@@ -94,14 +84,16 @@ mod tests {
 
     #[test]
     fn test_get_gray_scale() {
-        let mut image = Image::new(vec![100, 100, 100, 0, 0, 0], 2, 1, ColorModel::HSV);
+        let mut image = Image::new(6, 2, 1);
+        image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(image.get_usage_rate_gray_scale(), vec![1, 0, 0])
     }
 
     #[test]
     fn test_get_saturation() {
-        let mut image = Image::new(vec![100, 100, 100, 0, 0, 0], 2, 1, ColorModel::HSV);
+        let mut image = Image::new(6, 2, 1);
+        image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
             image.get_usage_rate_saturation(),
@@ -111,21 +103,12 @@ mod tests {
 
     #[test]
     fn test_get_brightness() {
-        let mut image = Image::new(vec![100, 100, 100, 0, 0, 0], 2, 1, ColorModel::HSV);
+        let mut image = Image::new(6, 2, 1);
+        image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
             image.get_usage_rate_brightness(),
             vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-        )
-    }
-
-    #[test]
-    fn test_get_hue_rgb() {
-        let mut image = Image::new(vec![85, 255, 0, 0, 0, 0], 2, 1, ColorModel::RGB);
-        image.calc_usage_rate();
-        assert_eq!(
-            image.get_usage_rate_hue(),
-            vec![0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
         )
     }
 }
