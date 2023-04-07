@@ -16,4 +16,4 @@ publish:
 	&& rm -f dist/pkg/LICENSE \
 	&& rm -f dist/pkg/README.md \
 	&& cd dist \
-	&& npm puplish
+	&& npm publish
