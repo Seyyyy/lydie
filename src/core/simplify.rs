@@ -38,45 +38,55 @@ impl UsageRate {
     }
 }
 
-pub fn get_usage_rate_per_color(hsv_vec: &Vec<Vec<u16>>) -> UsageRate {
-    let arr = trim_gray_scale(&hsv_vec, 5, 5);
+pub fn get_usage_rate_per_color(v: &Vec<u16>, width: u16, height: u16) -> UsageRate {
+    let mut hc_arr: [u32; SAMPLING_CHROMATIC_LEVEL] = [0; SAMPLING_CHROMATIC_LEVEL];
+    let mut hg_arr: [u32; SAMPLING_GRAY_LEVEL] = [0; SAMPLING_GRAY_LEVEL];
+    let mut s_arr: [u32; SAMPLING_CHROMATIC_LEVEL] = [0; SAMPLING_CHROMATIC_LEVEL];
+    let mut b_arr: [u32; SAMPLING_CHROMATIC_LEVEL] = [0; SAMPLING_CHROMATIC_LEVEL];
 
-    let mut hc_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
-    let mut hg_arr = vec![0; SAMPLING_GRAY_LEVEL];
-    let mut s_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
-    let mut b_arr = vec![0; SAMPLING_CHROMATIC_LEVEL];
+    let size = (width as u32) * (height as u32) * 3;
 
-    // analisys chromatic array
-    for i in arr.1 {
-        let hi = sampling(i[0] as f64, 360., (SAMPLING_CHROMATIC_LEVEL - 1) as f64);
-        let si = sampling(
-            (i[1] - 5) as f64,
-            95.,
-            (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
-        );
-        let bi = sampling(
-            (i[2] - 5) as f64,
-            95.,
-            (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
-        );
-        hc_arr[hi as usize] += 1;
-        s_arr[si as usize] += 1;
-        b_arr[bi as usize] += 1;
+    for i in (0..size).step_by(3) {
+        if is_gray_scale(
+            [v[i as usize], v[(i + 1) as usize], v[(i + 2) as usize]],
+            5,
+            5,
+        ) {
+            let hi = sampling(
+                v[(i + 2) as usize] as f64,
+                100.,
+                (SAMPLING_GRAY_LEVEL - 1) as f64,
+            );
+            hg_arr[hi as usize] += 1;
+        } else {
+            let hi = sampling(
+                v[i as usize] as f64,
+                360.,
+                (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
+            );
+            let si = sampling(
+                (v[(i + 1) as usize] - 5) as f64,
+                95.,
+                (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
+            );
+            let bi = sampling(
+                (v[(i + 2) as usize] - 5) as f64,
+                95.,
+                (SAMPLING_CHROMATIC_LEVEL - 1) as f64,
+            );
+            hc_arr[hi as usize] += 1;
+            s_arr[si as usize] += 1;
+            b_arr[bi as usize] += 1;
+        }
     }
 
-    // analisys gray scale array
-    for i in arr.0 {
-        let hi = sampling(i[2] as f64, 100., (SAMPLING_GRAY_LEVEL - 1) as f64);
-        hg_arr[hi as usize] += 1;
-    }
-
-    let expect = UsageRate {
-        hue_chromatic: hc_arr,
-        hue_gray: hg_arr,
-        saturation: s_arr,
-        brightness: b_arr,
+    let result = UsageRate {
+        hue_chromatic: hc_arr.to_vec(),
+        hue_gray: hg_arr.to_vec(),
+        saturation: s_arr.to_vec(),
+        brightness: b_arr.to_vec(),
     };
-    return expect;
+    return result;
 }
 
 fn sampling(v: f64, before_range: f64, after_range: f64) -> u16 {
@@ -88,23 +98,11 @@ fn sampling(v: f64, before_range: f64, after_range: f64) -> u16 {
     }
 }
 
-fn trim_gray_scale(
-    v: &Vec<Vec<u16>>,
-    threshold_saturation: u16,
-    threshold_brightness: u16,
-) -> (Vec<Vec<u16>>, Vec<Vec<u16>>) {
-    let mut chromatic: Vec<Vec<u16>> = Vec::new();
-    let mut gray: Vec<Vec<u16>> = Vec::new();
-
-    for j in v {
-        if j[1] <= threshold_saturation || j[2] <= threshold_brightness {
-            gray.push(j.to_vec());
-        } else {
-            chromatic.push(j.to_vec());
-        }
+fn is_gray_scale(v: [u16; 3], threshold_saturation: u16, threshold_value: u16) -> bool {
+    if v[1] <= threshold_saturation || v[2] <= threshold_value {
+        return true;
     }
-
-    (gray, chromatic)
+    false
 }
 
 #[cfg(test)]
@@ -143,40 +141,29 @@ mod test {
         assert_eq!(1, sampling(40., 100., 2.))
     }
 
-    // 無彩色を削除した配列と無彩色のみの配列を生成
+    // 無彩色の判定
     #[test]
-    fn case_trim_gray_scale() {
-        let original = vec![
-            vec![0, 5, 100],
-            vec![0, 100, 5],
-            vec![0, 6, 100],
-            vec![0, 100, 6],
-        ];
-        let expect = (
-            vec![vec![0, 5, 100], vec![0, 100, 5]],
-            vec![vec![0, 6, 100], vec![0, 100, 6]],
-        );
-        // sが5%以下またはbが5%以下
-        assert_eq!(expect, trim_gray_scale(&original, 5, 5))
+    fn case_is_gray_scale() {
+        assert_eq!(true, is_gray_scale([0, 5, 100], 5, 5));
+        assert_eq!(true, is_gray_scale([0, 100, 5], 5, 5));
+        assert_eq!(false, is_gray_scale([0, 6, 100], 5, 5));
+        assert_eq!(false, is_gray_scale([0, 100, 6], 5, 5));
     }
 
     // hsv配列を受け取って分析結果を返却する
     // 各段階ごとのピクセル数を返却する
     // 割合の計算は親モジュールの責務
     #[test]
-    fn case_usage_rate_per_color() {
-        let image_vec = vec![
-            vec![0, 6, 100],
-            vec![180, 55, 55],
-            vec![360, 100, 6],
-            vec![180, 0, 100],
-        ];
+    fn case_get_usage_rate_per_color() {
+        let image_vec = vec![0, 6, 100, 180, 55, 55, 360, 100, 6, 180, 0, 100];
+        let width = 2;
+        let height = 2;
         let expect = UsageRate {
             hue_chromatic: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
             hue_gray: vec![0, 0, 1],
             saturation: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
             brightness: vec![1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
         };
-        assert_eq!(expect, get_usage_rate_per_color(&image_vec))
+        assert_eq!(expect, get_usage_rate_per_color(&image_vec, width, height))
     }
 }
