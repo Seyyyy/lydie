@@ -38,12 +38,8 @@ impl Image {
 
     #[wasm_bindgen]
     pub fn calc_usage_rate(&mut self) {
-        let arry = formatter::array::convert_2d_array(
-            &self.hsv,
-            self.width as usize,
-            self.height as usize,
-        );
-        self.usage_rate = core::simplify::get_usage_rate_per_color(&arry);
+        self.usage_rate =
+            core::simplify::get_usage_rate_per_color(&self.hsv, self.width, self.height);
     }
 
     #[wasm_bindgen]
