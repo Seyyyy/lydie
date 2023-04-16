@@ -17,3 +17,7 @@ publish:
 	&& rm -f dist/pkg/README.md \
 	&& cd dist \
 	&& npm publish
+
+lint:
+	@echo "Linting..." \
+	&& cargo clippy --all-targets --all-features -- -A warnings

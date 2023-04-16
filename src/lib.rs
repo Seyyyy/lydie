@@ -20,6 +20,7 @@ pub struct Image {
 #[wasm_bindgen]
 impl Image {
     #[wasm_bindgen(constructor)]
+    #[allow(clippy::uninit_vec)]
     pub fn new(size: u32, width: u16, height: u16) -> Image {
         let mut hsv_arr = Vec::with_capacity(size as usize);
         unsafe {
