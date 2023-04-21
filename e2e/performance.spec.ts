@@ -21,7 +21,7 @@ test.describe("パフォーマンステスト", () => {
   };
 
   for (let i = 0; i < 5; i++) {
-    test(`calc usage rate: ${i}`, async ({ page, defaultBrowserType }) => {
+    test(`calc usage rate: ${i + 1}`, async ({ page, defaultBrowserType }) => {
       const result = await page.locator("div#time").allInnerTexts();
       checkPerf(parseFloat(result[0]), defaultBrowserType);
     });
