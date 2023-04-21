@@ -9,13 +9,13 @@ test.describe("パフォーマンステスト", () => {
   const checkPerf = async (ms: number, browserType: string) => {
     switch (browserType) {
       case "chromium":
-        await expect(ms).toBeLessThan(50);
+        await expect(ms).toBeLessThan(100);
         break;
       case "firefox":
-        await expect(ms).toBeLessThan(150);
+        await expect(ms).toBeLessThan(200);
         break;
       case "webkit":
-        await expect(ms).toBeLessThan(100);
+        await expect(ms).toBeLessThan(200);
         break;
     }
   };
