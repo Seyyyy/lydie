@@ -21,3 +21,8 @@ publish:
 lint:
 	@echo "Linting..." \
 	&& cargo clippy --all-targets --all-features -- -A warnings
+
+e2e-test:
+	@echo "Testing..." \
+	&& wasm-pack build --target web --out-dir dist/pkg --release \
+	&& npm run test:e2e

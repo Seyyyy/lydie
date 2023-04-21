@@ -1,11 +1,14 @@
 {
   "scripts": {
     "prepare": "husky install",
-    "commitmsg": "commitlint -e $GIT_PARAMS"
+    "commitmsg": "commitlint -e $GIT_PARAMS",
+    "start:e2e": "cd e2e/env && npm ci && npm run build && npm run preview",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
+    "@playwright/test": "^1.32.3",
     "husky": "^8.0.3"
   }
 }
