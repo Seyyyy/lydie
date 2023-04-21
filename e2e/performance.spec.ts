@@ -1,11 +1,6 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("パフォーマンステスト", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("http://localhost:4173/");
-    await page.getByText("image analyzed").innerHTML();
-  });
-
   test(`calc usage rate time`, async ({ page, defaultBrowserType }) => {
     const checkNum = 5;
     let result_avarage = 0;
