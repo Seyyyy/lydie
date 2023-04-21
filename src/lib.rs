@@ -62,6 +62,11 @@ impl Image {
     pub fn get_usage_rate_brightness(&self) -> Vec<u32> {
         self.usage_rate.get_brightness()
     }
+
+    #[wasm_bindgen]
+    pub fn get_entropy(&self) -> Vec<f64> {
+        core::stats::get_entropy(&self.usage_rate)
+    }
 }
 
 #[cfg(test)]
