@@ -47,6 +47,11 @@ export function Viewer(props: Props) {
         {"Pixel count is : " + sum(props.image.get_usage_rate_gray_scale())}
       </p>
       {getElement(props.image.get_usage_rate_gray_scale(), gray)}
+      <h3 className="border">entropy</h3>
+      <p>{"Hue Entropy is : " + props.image.get_entropy()[0]}</p>
+      <p>{"Saturation Entropy is : " + props.image.get_entropy()[2]}</p>
+      <p>{"Brightness Entropy is : " + props.image.get_entropy()[3]}</p>
+      <p>{"Gray Entropy is : " + props.image.get_entropy()[1]}</p>
     </div>
   );
 }

@@ -5,10 +5,10 @@ const SAMPLING_GRAY_LEVEL: usize = 3;
 
 #[derive(Debug, PartialEq)]
 pub struct UsageRate {
-    hue_chromatic: Vec<u32>,
-    hue_gray: Vec<u32>,
-    saturation: Vec<u32>,
-    brightness: Vec<u32>,
+    pub hue_chromatic: Vec<u32>,
+    pub hue_gray: Vec<u32>,
+    pub saturation: Vec<u32>,
+    pub brightness: Vec<u32>,
 }
 
 impl UsageRate {
