@@ -22,7 +22,7 @@ impl Image {
     #[wasm_bindgen(constructor)]
     #[allow(clippy::uninit_vec)]
     pub fn new(size: u32, width: u16, height: u16) -> Result<Image, JsError> {
-        if size != (width * height * 3) as u32 {
+        if size != width as u32 * height as u32 * 3 {
             return Err(JsError::new("size must be width * height * 3(hsv)"));
         }
         let mut hsv_arr = Vec::with_capacity(size as usize);
