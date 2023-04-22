@@ -1,3 +1,11 @@
+debug-build:
+	@echo "Building..." \
+	&& wasm-pack build --target web --out-dir dist/pkg --debug
+
+build:
+	@echo "Building..." \
+	&& wasm-pack build --target web --out-dir dist/pkg --release
+
 pack:
 	@echo "Packaging..." \
 	&& wasm-pack build --target web --out-dir dist/pkg --debug \
