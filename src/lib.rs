@@ -21,20 +21,23 @@ pub struct Image {
 impl Image {
     #[wasm_bindgen(constructor)]
     #[allow(clippy::uninit_vec)]
-    pub fn new(size: u32, width: u16, height: u16) -> Image {
+    pub fn new(size: u32, width: u16, height: u16) -> Result<Image, JsError> {
+        if size != width as u32 * height as u32 * 3 {
+            return Err(JsError::new("size must be width * height * 3(hsv)"));
+        }
         let mut hsv_arr = Vec::with_capacity(size as usize);
         unsafe {
             hsv_arr.set_len(size as usize);
         }
         let hsv_pointer = hsv_arr.as_ptr();
 
-        Image {
+        Ok(Image {
             hsv: hsv_arr,
             width,
             height,
             usage_rate: core::simplify::UsageRate::new(),
             hsv_pointer,
-        }
+        })
     }
 
     #[wasm_bindgen]
@@ -75,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_get_hue() {
-        let mut image = Image::new(6, 2, 1);
+        let mut image = Image::new(6, 2, 1).map_err(JsValue::from).unwrap();
         image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
@@ -86,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_get_gray_scale() {
-        let mut image = Image::new(6, 2, 1);
+        let mut image = Image::new(6, 2, 1).map_err(JsValue::from).unwrap();
         image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(image.get_usage_rate_gray_scale(), vec![1, 0, 0])
@@ -94,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_get_saturation() {
-        let mut image = Image::new(6, 2, 1);
+        let mut image = Image::new(6, 2, 1).map_err(JsValue::from).unwrap();
         image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
@@ -105,7 +108,7 @@ mod tests {
 
     #[test]
     fn test_get_brightness() {
-        let mut image = Image::new(6, 2, 1);
+        let mut image = Image::new(6, 2, 1).map_err(JsValue::from).unwrap();
         image.hsv = vec![100, 100, 100, 0, 0, 0];
         image.calc_usage_rate();
         assert_eq!(
