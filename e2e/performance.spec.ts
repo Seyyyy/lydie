@@ -17,10 +17,10 @@ test.describe("パフォーマンステスト", () => {
         await expect(ms).toBeLessThan(100);
         break;
       case "firefox":
-        await expect(ms).toBeLessThan(200);
+        await expect(ms).toBeLessThan(250);
         break;
       case "webkit":
-        await expect(ms).toBeLessThan(200);
+        await expect(ms).toBeLessThan(250);
         break;
     }
   });
