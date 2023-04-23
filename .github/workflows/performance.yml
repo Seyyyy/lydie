@@ -4,6 +4,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   performance_tests:
@@ -32,11 +33,11 @@ jobs:
 
       # Prepared based on the following comments, thanks.
       # https://github.com/microsoft/playwright/issues/7249#issuecomment-1385567519
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: node-modules-${{ hashFiles('package-lock.json') }}
+      # - name: Cache Node Modules
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: node-modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install Dependencies
         run: npm ci
