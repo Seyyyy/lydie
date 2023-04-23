@@ -17,6 +17,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+
+      # Prepared based on the following comments, thanks.
+      # https://github.com/actions/cache/blob/main/examples.md#rust---cargo
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       # Prepared based on the following comments, thanks.
       # https://github.com/microsoft/playwright/issues/7249#issuecomment-1385567519
       - name: Cache Node Modules
@@ -24,21 +37,26 @@ jobs:
         with:
           path: ~/.npm
           key: node-modules-${{ hashFiles('package-lock.json') }}
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Store Playwright's Version
         run: |
           PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')
           echo "Playwright's Version: $PLAYWRIGHT_VERSION"
           echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+
       - name: Cache Playwright Browsers for Playwright's Version
         id: cache-playwright-browsers
         uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
+
       - name: Setup Playwright
         if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
       - name: Run Playwright tests
         run: make e2e-test
