@@ -39,6 +39,9 @@ jobs:
       #     path: ~/.npm
       #     key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
 
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Store Playwright's Version
         run: |
           PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')
@@ -52,12 +55,13 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
 
-      - name: Install Dependencies
-        run: npm ci
-
       - name: Setup Playwright
         if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Setup Playwright
+        if: steps.cache-playwright-browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
 
       # - name: Setup Playwright
       #   run: npx playwright install --with-deps
