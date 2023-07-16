@@ -117,28 +117,44 @@ pub fn get_hsb_rate(usage_rate: &UsageRate) -> HSBRate {
     let mut hue_chromatic = [0.; SAMPLING_CHROMATIC_LEVEL];
     let sum = usage_rate.hue_chromatic.iter().sum::<u32>() as f64;
     for i in 0..usage_rate.hue_chromatic.len() {
-        hue_chromatic[i] = usage_rate.hue_chromatic[i] as f64 / sum;
+        let mut rate = usage_rate.hue_chromatic[i] as f64 / sum;
+        if rate.is_nan() {
+            rate = 0.;
+        }
+        hue_chromatic[i] = rate;
     }
 
     // for hue_gray each rate
     let mut hue_gray = [0.; SAMPLING_GRAY_LEVEL];
     let sum = usage_rate.hue_gray.iter().sum::<u32>() as f64;
     for i in 0..usage_rate.hue_gray.len() {
-        hue_gray[i] = usage_rate.hue_gray[i] as f64 / sum;
+        let mut rate = usage_rate.hue_gray[i] as f64 / sum;
+        if rate.is_nan() {
+            rate = 0.;
+        }
+        hue_gray[i] = rate;
     }
 
     // for saturation each rate
     let mut saturation = [0.; SAMPLING_CHROMATIC_LEVEL];
     let sum = usage_rate.saturation.iter().sum::<u32>() as f64;
     for i in 0..usage_rate.saturation.len() {
-        saturation[i] = usage_rate.saturation[i] as f64 / sum;
+        let mut rate = usage_rate.saturation[i] as f64 / sum;
+        if rate.is_nan() {
+            rate = 0.;
+        }
+        saturation[i] = rate;
     }
 
     // for brightness each rate
     let mut brightness = [0.; SAMPLING_CHROMATIC_LEVEL];
     let sum = usage_rate.brightness.iter().sum::<u32>() as f64;
     for i in 0..usage_rate.brightness.len() {
-        brightness[i] = usage_rate.brightness[i] as f64 / sum;
+        let mut rate = usage_rate.brightness[i] as f64 / sum;
+        if rate.is_nan() {
+            rate = 0.;
+        }
+        brightness[i] = rate;
     }
 
     HSBRate {
@@ -183,6 +199,24 @@ mod test {
         let expect = HSBRate {
             hue_chromatic: [0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0., 0., 0., 0., 0.0],
             hue_gray: [0.2, 0.2, 0.6],
+            saturation: [0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 0.0],
+            brightness: [0.0, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25],
+        };
+        assert_eq!(expect, hsb_rate);
+    }
+
+    #[test]
+    fn case_convert_nan_to_zero() {
+        let usage_rate = UsageRate {
+            hue_chromatic: vec![3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            hue_gray: vec![0, 0, 0],
+            saturation: vec![0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            brightness: vec![0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        };
+        let hsb_rate = get_hsb_rate(&usage_rate);
+        let expect = HSBRate {
+            hue_chromatic: [0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0., 0., 0., 0., 0.0],
+            hue_gray: [0., 0., 0.],
             saturation: [0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 0.0],
             brightness: [0.0, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25],
         };
