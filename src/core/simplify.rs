@@ -1,7 +1,7 @@
 // 0 ~ 11 (Level 12)
-const SAMPLING_CHROMATIC_LEVEL: usize = 12;
+pub const SAMPLING_CHROMATIC_LEVEL: usize = 12;
 // 0 ~ 2 (Level 3)
-const SAMPLING_GRAY_LEVEL: usize = 3;
+pub const SAMPLING_GRAY_LEVEL: usize = 3;
 
 #[derive(Debug, PartialEq)]
 pub struct UsageRate {

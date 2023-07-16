@@ -70,6 +70,11 @@ impl Image {
     pub fn get_entropy(&self) -> Vec<f64> {
         core::stats::get_entropy(&self.usage_rate)
     }
+
+    #[wasm_bindgen]
+    pub fn get_csv(&self) -> Vec<f64> {
+        formatter::csv::struct2csv(&self.usage_rate).to_vec()
+    }
 }
 
 #[cfg(test)]

@@ -1,4 +1,6 @@
 use super::simplify::UsageRate;
+use super::simplify::SAMPLING_CHROMATIC_LEVEL;
+use super::simplify::SAMPLING_GRAY_LEVEL;
 
 #[derive(Debug, PartialEq)]
 pub struct Entropy {
@@ -102,6 +104,51 @@ pub fn get_entropy(usage_rate: &UsageRate) -> Vec<f64> {
     ]
 }
 
+#[derive(Debug, PartialEq)]
+pub struct HSBRate {
+    pub hue_chromatic: [f64; SAMPLING_CHROMATIC_LEVEL],
+    pub hue_gray: [f64; SAMPLING_GRAY_LEVEL],
+    pub saturation: [f64; SAMPLING_CHROMATIC_LEVEL],
+    pub brightness: [f64; SAMPLING_CHROMATIC_LEVEL],
+}
+
+pub fn get_hsb_rate(usage_rate: &UsageRate) -> HSBRate {
+    // for hue_chromatic each rate
+    let mut hue_chromatic = [0.; SAMPLING_CHROMATIC_LEVEL];
+    let sum = usage_rate.hue_chromatic.iter().sum::<u32>() as f64;
+    for i in 0..usage_rate.hue_chromatic.len() {
+        hue_chromatic[i] = usage_rate.hue_chromatic[i] as f64 / sum;
+    }
+
+    // for hue_gray each rate
+    let mut hue_gray = [0.; SAMPLING_GRAY_LEVEL];
+    let sum = usage_rate.hue_gray.iter().sum::<u32>() as f64;
+    for i in 0..usage_rate.hue_gray.len() {
+        hue_gray[i] = usage_rate.hue_gray[i] as f64 / sum;
+    }
+
+    // for saturation each rate
+    let mut saturation = [0.; SAMPLING_CHROMATIC_LEVEL];
+    let sum = usage_rate.saturation.iter().sum::<u32>() as f64;
+    for i in 0..usage_rate.saturation.len() {
+        saturation[i] = usage_rate.saturation[i] as f64 / sum;
+    }
+
+    // for brightness each rate
+    let mut brightness = [0.; SAMPLING_CHROMATIC_LEVEL];
+    let sum = usage_rate.brightness.iter().sum::<u32>() as f64;
+    for i in 0..usage_rate.brightness.len() {
+        brightness[i] = usage_rate.brightness[i] as f64 / sum;
+    }
+
+    HSBRate {
+        hue_chromatic,
+        hue_gray,
+        saturation,
+        brightness,
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -122,5 +169,23 @@ mod test {
     #[test]
     fn case_max_entropy() {
         assert_eq!(3.584962500721156, max_entropy(12));
+    }
+
+    #[test]
+    fn case_hsb_rate() {
+        let usage_rate = UsageRate {
+            hue_chromatic: vec![3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            hue_gray: vec![2, 2, 6],
+            saturation: vec![0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            brightness: vec![0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+        };
+        let hsb_rate = get_hsb_rate(&usage_rate);
+        let expect = HSBRate {
+            hue_chromatic: [0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0., 0., 0., 0., 0.0],
+            hue_gray: [0.2, 0.2, 0.6],
+            saturation: [0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.25, 0.0, 0.0, 0.0, 0.0, 0.0],
+            brightness: [0.0, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25],
+        };
+        assert_eq!(expect, hsb_rate);
     }
 }
