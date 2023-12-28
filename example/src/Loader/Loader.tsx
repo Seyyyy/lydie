@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import init, { Lydie, Image as LImage, InitOutput } from "lydie";
-import url from "lydie/pkg/lydie_bg.wasm?url";
+import url from "lydie/web/lydie_bg.wasm?url";
 import "./Loader.css";
 import { Viewer } from "./Viewer";
 

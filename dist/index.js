@@ -1,7 +1,9 @@
-import init, { Image } from "./pkg/lydie.js";
-export default init;
+import init, { Image } from "./web/lydie.js";
 
-export * from "./pkg/lydie.js";
+export * from "./node/lydie";
+export * from "./web/lydie";
+
+export default init;
 
 export class Lydie {
   /**

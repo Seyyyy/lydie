@@ -1,28 +1,36 @@
 debug-build:
 	@echo "Building..." \
-	&& wasm-pack build --target web --out-dir dist/pkg --debug
+	&& wasm-pack build --target bundler --out-dir dist/node --debug \
+	&& wasm-pack build --target web --out-dir dist/web --debug
 
 build:
 	@echo "Building..." \
-	&& wasm-pack build --target web --out-dir dist/pkg --release
+	&& wasm-pack build --target bundler --out-dir dist/node --release \
+	&& wasm-pack build --target web --out-dir dist/web --release
 
 pack:
 	@echo "Packaging..." \
-	&& wasm-pack build --target web --out-dir dist/pkg --debug \
 	&& cp -f README.md dist/README.md \
 	&& cp -f LICENSE dist/LICENSE \
-	&& rm -f dist/pkg/LICENSE \
-	&& rm -f dist/pkg/README.md \
+	&& wasm-pack build --target bundler --out-dir dist/node --debug \
+	&& rm -f dist/node/LICENSE \
+	&& rm -f dist/node/README.md \
+	&& wasm-pack build --target web --out-dir dist/web --debug \
+	&& rm -f dist/web/LICENSE \
+	&& rm -f dist/web/README.md \
 	&& cd dist \
 	&& npm pack
 
 publish:
 	@echo "Publishing..." \
-	&& wasm-pack build --target web --out-dir dist/pkg --release \
 	&& cp -f README.md dist/README.md \
 	&& cp -f LICENSE dist/LICENSE \
-	&& rm -f dist/pkg/LICENSE \
-	&& rm -f dist/pkg/README.md \
+	&& wasm-pack build --target bundler --out-dir dist/node --release \
+	&& rm -f dist/node/LICENSE \
+	&& rm -f dist/node/README.md \
+	&& wasm-pack build --target web --out-dir dist/web --debug \
+	&& rm -f dist/web/LICENSE \
+	&& rm -f dist/web/README.md \
 	&& cd dist \
 	&& npm publish
 
@@ -32,5 +40,5 @@ lint:
 
 e2e-test:
 	@echo "Testing..." \
-	&& wasm-pack build --target web --out-dir dist/pkg --release \
+	&& make build \
 	&& npm run test:e2e
