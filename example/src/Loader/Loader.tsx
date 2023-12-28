@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Lydie, Image as LImage } from "lydie";
-import * as wasm from "lydie/pkg/lydie_bg.wasm";
+import React, { useState, useEffect } from "react";
+import init, { Lydie, Image as LImage, InitOutput } from "lydie";
+import url from "lydie/web/lydie_bg.wasm?url";
 import "./Loader.css";
 import { Viewer } from "./Viewer";
 
@@ -12,6 +12,14 @@ export function ImageLoader() {
     width: 0,
     height: 0,
   });
+  const [wasm, setWasm] = useState<InitOutput>({} as InitOutput);
+
+  useEffect(() => {
+    (async () => {
+      const wasm = await init(url);
+      setWasm(wasm);
+    })();
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

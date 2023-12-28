@@ -4,16 +4,19 @@
     "seyyyy"
   ],
   "description": "sampling color",
-  "version": "0.1.7",
+  "version": "0.2.1",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Seyyyy/lydie.git"
   },
   "files": [
-    "pkg/lydie_bg.wasm",
-    "pkg/lydie.js",
-    "pkg/lydie.d.ts",
+    "web/lydie_bg.wasm",
+    "web/lydie.js",
+    "web/lydie.d.ts",
+    "node/lydie_bg.wasm",
+    "node/lydie.js",
+    "node/lydie.d.ts",
     "index.js",
     "index.d.ts"
   ],
