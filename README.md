@@ -11,12 +11,12 @@ $ npm i lydie
 ## Usage
 
 ```ts
-import init, { Lydie } from "lydie";
+import { Lydie } from "lydie";
+import * as wasm from "lydie/pkg/lydie_bg.wasm";
 
-const wasm = init();
 // hsvArray is 3-dimensional array in hsv color.
-// First argument of Image constructor must be received 1-dimensional array.
-const lydie = new Image(hsvArray.flat(), width, height, wasm.memory);
+// First argument of Lydie constructor must be received 1-dimensional array.
+const lydie = new Lydie(hsvArray.flat(), width, height, wasm.memory);
 // Sapmling of colors.
 lydie.image.calc_usage_rate();
 

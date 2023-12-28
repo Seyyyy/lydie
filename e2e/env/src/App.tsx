@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import init, { Lydie, Image as LImage, InitOutput } from "lydie";
-import url from "lydie/pkg/lydie_bg.wasm?url";
+import init, { Lydie, Image as LImage } from "lydie";
+import * as wasm from "lydie/pkg/lydie_bg.wasm";
 
 const TEST_IMAGE_WIDTH = 1000;
 const TEST_IMAGE_HEIGHT = 1000;
@@ -24,17 +24,9 @@ async function createTestImages(createNumber: number) {
 }
 
 function App() {
-  const [wasm, setWasm] = useState<InitOutput>({} as InitOutput);
   const [images, setImages] = useState<number[][] | null>(null);
   const [analyze, setAnalyze] = useState<LImage | null>(null);
   const [time, setTime] = useState<number>(0);
-
-  useEffect(() => {
-    (async () => {
-      const wasm = await init(url);
-      setWasm(wasm);
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {

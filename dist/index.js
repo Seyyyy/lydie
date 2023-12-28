@@ -1,5 +1,4 @@
-import init, { Image } from "./pkg/lydie.js";
-export default init;
+import { Image } from "./pkg/lydie.js";
 
 export * from "./pkg/lydie.js";
 
