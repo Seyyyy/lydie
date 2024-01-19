@@ -25,7 +25,7 @@ jobs:
 
       # Prepared based on the following comments, thanks.
       # https://github.com/actions/cache/blob/main/examples.md#rust---cargo
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -38,7 +38,7 @@ jobs:
       # Prepared based on the following comments, thanks.
       # https://github.com/microsoft/playwright/issues/7249#issuecomment-1385567519
       # - name: Cache Node Modules
-      #   uses: actions/cache@v3
+      #   uses: actions/cache@v4
       #   with:
       #     path: ~/.npm
       #     key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Cache Playwright Browsers for Playwright's Version
         id: cache-playwright-browsers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}

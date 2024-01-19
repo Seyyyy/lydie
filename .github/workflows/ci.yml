@@ -22,7 +22,7 @@ jobs:
 
       # Prepared based on the following comments, thanks.
       # https://github.com/actions/cache/blob/main/examples.md#rust---cargo
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
