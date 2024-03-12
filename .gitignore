@@ -4,3 +4,5 @@ local
 /test-results/
 /playwright-report/
 /playwright/.cache/
+.rollup.cache/
+dist/
