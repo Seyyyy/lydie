@@ -44,6 +44,7 @@
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "start:e2e": "cd e2e/env && npm ci && npm run build && npm run preview",
     "test:e2e": "playwright test",
+    "test": "vitest",
     "prebuild": "rm -rf dist",
     "build": "npm run prebuild && rollup -c && npm run copy",
     "copy": "cp package.json README.md LICENSE dist && node scripts/formatPackageJson.js"
