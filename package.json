@@ -1,14 +1,62 @@
 {
+  "name": "lydie",
+  "collaborators": [
+    "seyyyy"
+  ],
+  "description": "sampling color",
+  "version": "0.3.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Seyyyy/lydie.git"
+  },
+  "homepage": "https://github.com/Seyyyy/lydie#readme",
+  "files": [
+    "**"
+  ],
+  "main": "./esm/index.js",
+  "module": "./cjs/index.es.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./esm/index.d.ts",
+        "default": "./esm/index.js"
+      },
+      "default": {
+        "types": "./cjs/index.d.ts",
+        "default": "./cjs/index.js"
+      }
+    },
+    "./*": {
+      "import": {
+        "types": "./esm/*.d.ts",
+        "default": "./esm/*.js"
+      },
+      "default": {
+        "types": "./cjs/*.d.ts",
+        "default": "./cjs/*.js"
+      }
+    }
+  },
   "scripts": {
     "prepare": "husky install",
     "commitmsg": "commitlint -e $GIT_PARAMS",
     "start:e2e": "cd e2e/env && npm ci && npm run build && npm run preview",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test": "vitest",
+    "prebuild": "rm -rf dist",
+    "build": "npm run prebuild && rollup -c && npm run copy",
+    "copy": "cp package.json README.md LICENSE dist && node scripts/formatPackageJson.js"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.4.4",
+    "@commitlint/cli": "^19.1.0",
     "@commitlint/config-conventional": "^17.4.4",
-    "@playwright/test": "^1.32.3",
-    "husky": "^8.0.3"
+    "@rollup/plugin-typescript": "^11.1.6",
+    "husky": "^9.0.11",
+    "rollup": "^4.13.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.2",
+    "vitest": "^1.3.1"
   }
 }
