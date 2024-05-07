@@ -7,6 +7,8 @@ updates:
       day: "friday"
     target-branch: main
     labels: ["dependencies"]
+    assignees:
+      - "Seyyyy"
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -14,3 +16,5 @@ updates:
       day: "friday"
     target-branch: main
     labels: ["dependencies"]
+    assignees:
+      - "Seyyyy"
